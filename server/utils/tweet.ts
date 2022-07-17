@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { TweetV1, TwitterApi } from "twitter-api-v2";
 
 export class Tweet {
@@ -32,19 +33,27 @@ export class Tweet {
     return `https://twitter.com/${this.status.user.id}/status/${this.status.id}`;
   }
 
+  get id() {
+    return this.status.id_str;
+  }
+
+  get text() {
+    return this.status.full_text;
+  }
+
+  get postDate() {
+    return dayjs(this.status.created_at).toDate();
+  }
+
+  get userId() {
+    return this.status.user.id_str;
+  }
+
   get username() {
     return this.status.user.name;
   }
 
   get profileImageUrl() {
     return this.status.user.profile_image_url_https;
-  }
-
-  get postDate() {
-    return this.status.created_at;
-  }
-
-  get text() {
-    return this.status.full_text;
   }
 }

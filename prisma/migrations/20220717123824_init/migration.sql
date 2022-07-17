@@ -12,6 +12,7 @@ CREATE TABLE "Post" (
 -- CreateTable
 CREATE TABLE "Image" (
     "id" TEXT NOT NULL,
+    "index" INTEGER NOT NULL,
     "postId" TEXT NOT NULL,
 
     CONSTRAINT "Image_pkey" PRIMARY KEY ("id")

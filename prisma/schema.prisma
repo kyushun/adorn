@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -19,6 +20,7 @@ model Post {
 
 model Image {
   id     String @id @default(uuid())
+  index  Int
   postId String
   post   Post   @relation(fields: [postId], references: [id])
 }
