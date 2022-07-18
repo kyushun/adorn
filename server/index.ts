@@ -4,8 +4,8 @@ dotenv.config();
 import express, { Request, Response } from "express";
 import next from "next";
 
-import apiRouter from "./api";
-import imagesRouter from "./images";
+import apiRouter from "./routes/api";
+import imagesRouter from "./routes/images";
 
 const dev = process.env.NODE_ENV === "development";
 const port = 3000;

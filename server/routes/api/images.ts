@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 
-import { createImageUrl, createTwitterProfileUrl } from "../utils/url";
+import { createImageUrl, createTwitterProfileUrl } from "../../utils/url";
 
 const prisma = new PrismaClient();
 

@@ -1,7 +1,7 @@
 import S3 from "aws-sdk/clients/s3";
 import express from "express";
 
-import s3 from "./utils/s3";
+import s3 from "../utils/s3";
 
 const router = express.Router();
 

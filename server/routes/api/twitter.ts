@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 
-import s3 from "../utils/s3";
-import { Tweet } from "../utils/tweet";
+import s3 from "../../utils/s3";
+import { Tweet } from "../../utils/tweet";
 
 const prisma = new PrismaClient();
 
