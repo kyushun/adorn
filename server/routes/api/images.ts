@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
       },
     },
     skip: cursor ? 1 : undefined,
-    take: 3,
+    take: 30,
     cursor: cursor ? { id: cursor } : undefined,
     orderBy: {
       createdAt: "desc",
