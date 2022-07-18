@@ -1,8 +1,8 @@
 import S3 from "aws-sdk/clients/s3";
 import express from "express";
 
-import { asyncHandler } from "../utils/express";
-import s3 from "../utils/s3";
+import { asyncHandler } from "@/server/utils/express";
+import s3 from "@/server/utils/s3";
 
 const router = express.Router();
 

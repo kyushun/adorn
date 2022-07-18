@@ -1,8 +1,8 @@
 import express from "express";
 
-import { asyncHandler } from "../../utils/express";
-import { prisma } from "../../utils/prisma";
-import { createImageUrl, createTwitterProfileUrl } from "../../utils/url";
+import { asyncHandler } from "@/server/utils/express";
+import { prisma } from "@/server/utils/prisma";
+import { createImageUrl, createTwitterProfileUrl } from "@/server/utils/url";
 
 const router = express.Router();
 

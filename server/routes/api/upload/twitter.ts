@@ -1,9 +1,9 @@
 import express from "express";
-import { asyncHandler } from "server/utils/express";
 
-import { prisma } from "../../../utils/prisma";
-import s3 from "../../../utils/s3";
-import { Tweet } from "../../../utils/tweet";
+import { asyncHandler } from "@/server/utils/express";
+import { prisma } from "@/server/utils/prisma";
+import s3 from "@/server/utils/s3";
+import { Tweet } from "@/server/utils/tweet";
 
 const router = express.Router();
 
