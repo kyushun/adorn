@@ -42,7 +42,7 @@ router.get("/", async (req, res) => {
         : undefined,
       images: images.map((v) => ({ url: createImageUrl(v.id) })),
     })),
-    cursor: posts[posts.length - 1].id,
+    cursor: posts.length > 0 ? posts[posts.length - 1].id : undefined,
   });
 });
 
