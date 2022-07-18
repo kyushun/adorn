@@ -8,11 +8,19 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
+const extractIdFromUrl = (url: string) => {
+  const match = url.match(/^https:\/\/twitter.com\/.+\/status\/(\d+)/);
+
+  return match?.[1] || url;
+};
+
 router.get("/", async (req, res) => {
-  const id = req.query.id as string | undefined;
-  if (id == undefined) {
+  const queryId = req.query.id as string | undefined;
+  if (queryId == undefined) {
     return res.status(404).send("invalid args");
   }
+
+  const id = extractIdFromUrl(queryId);
 
   let tweet: Tweet;
   try {
