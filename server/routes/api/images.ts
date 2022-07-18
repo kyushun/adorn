@@ -7,7 +7,9 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
-router.get("/", async (_, res) => {
+router.get("/", async (req, res) => {
+  const cursor = req.query.cursor as string | undefined;
+
   const posts = await prisma.post.findMany({
     select: {
       id: true,
@@ -24,18 +26,24 @@ router.get("/", async (_, res) => {
         },
       },
     },
-    take: 30,
+    skip: cursor ? 1 : undefined,
+    take: 3,
+    cursor: cursor ? { id: cursor } : undefined,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
-  return res.json(
-    posts.map(({ images, user, ...post }) => ({
+  return res.json({
+    posts: posts.map(({ images, user, ...post }) => ({
       ...post,
       user: user
         ? { ...user, url: createTwitterProfileUrl(user.id) }
         : undefined,
       images: images.map((v) => ({ url: createImageUrl(v.id) })),
-    }))
-  );
+    })),
+    cursor: posts[posts.length - 1].id,
+  });
 });
 
 export default router;
