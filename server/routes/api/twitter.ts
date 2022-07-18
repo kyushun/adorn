@@ -22,12 +22,20 @@ router.get("/", async (req, res) => {
     return res.status(404).send("not found");
   }
 
+  const exists = await prisma.post
+    .count({
+      where: { id: tweet.id },
+    })
+    .then(Boolean);
+
+  if (exists) {
+    return res.status(404).send("exists");
+  }
+
   const imageIds = await prisma.$transaction(async (prisma) => {
     const user = await prisma.user.upsert({
-      where: {
-        id: tweet.userId,
-      },
-      update: {},
+      where: { id: tweet.userId },
+      update: { name: tweet.username },
       create: {
         id: tweet.userId,
         name: tweet.username,
