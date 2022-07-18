@@ -1,10 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import express from "express";
 
+import { prisma } from "../../../utils/prisma";
 import s3 from "../../../utils/s3";
 import { Tweet } from "../../../utils/tweet";
-
-const prisma = new PrismaClient();
 
 const router = express.Router();
 

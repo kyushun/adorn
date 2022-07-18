@@ -40,3 +40,6 @@ yarn-error.log*
 
 # temporary
 /tmp
+
+# log files
+/logs

@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import express from "express";
 
+import { prisma } from "../../utils/prisma";
 import { createImageUrl, createTwitterProfileUrl } from "../../utils/url";
-
-const prisma = new PrismaClient();
 
 const router = express.Router();
 
