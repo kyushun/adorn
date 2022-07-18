@@ -1,13 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 
-import { Tweet } from "./utils/tweet";
+import s3 from "../utils/s3";
+import { Tweet } from "../utils/tweet";
 
 const prisma = new PrismaClient();
 
 const router = express.Router();
 
-router.get("/twitter", async (req, res) => {
+router.get("/", async (req, res) => {
   const id = req.query.id as string | undefined;
   if (id == undefined) {
     return res.status(404).send("invalid args");
@@ -43,12 +44,35 @@ router.get("/twitter", async (req, res) => {
     });
 
     const images = await Promise.all(
-      tweet.imageUrls!.map(async (_, index) => {
-        return await prisma.image.create({ data: { index, postId: post.id } });
+      tweet.imageUrls!.map(async (imageUrl, index) => {
+        const image = await prisma.image.create({
+          data: { index, postId: post.id },
+        });
+
+        const imageRes = await fetch(imageUrl);
+
+        if (!imageRes.body) {
+          throw new Error("image fetch error");
+        }
+
+        await s3.client
+          .upload({
+            Bucket: s3.bucketName,
+            Key: s3.createImageKey(image.id),
+            Body: imageRes.body,
+            ContentType: imageRes.headers.get("Content-Type") || undefined,
+          })
+          .promise();
+
+        return image;
       })
     );
 
-    return images.sort((image) => image.index).map((image) => image.id);
+    const imageIds = images
+      .sort((image) => image.index)
+      .map((image) => image.id);
+
+    return imageIds;
   });
 
   res.json(imageIds);
