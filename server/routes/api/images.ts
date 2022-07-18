@@ -18,13 +18,19 @@ router.get("/", async (req, res) => {
       createdAt: true,
       user: true,
       images: {
-        orderBy: {
-          order: "asc",
-        },
         select: {
           id: true,
         },
+        where: {
+          deletedAt: null,
+        },
+        orderBy: {
+          order: "asc",
+        },
       },
+    },
+    where: {
+      deletedAt: null,
     },
     skip: cursor ? 1 : undefined,
     take: 30,
