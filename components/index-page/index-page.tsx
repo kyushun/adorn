@@ -1,8 +1,40 @@
+/* eslint-disable @next/next/no-img-element */
+import { useSetAtom } from "jotai";
+import { useCallback, useState } from "react";
+import { isScrollFixedAtom } from "states/atoms";
+import { Image, Post } from "utils/type";
+
 import { ImageItem } from "./image-item";
 import { useFetchPosts } from "./use-fetch-posts";
 
 export const IndexPage = () => {
   const { bottomRef, data, error, isLoadingMore } = useFetchPosts();
+
+  const setIsScrollFixed = useSetAtom(isScrollFixedAtom);
+
+  const [selectedPostId, setSelectedPostId] = useState<Post["id"] | undefined>(
+    undefined
+  );
+  const [selectedImageUrl, setSelectedImageUrl] = useState<
+    Image["url"] | undefined
+  >(undefined);
+
+  const onClickImageItem = useCallback(
+    (postId: Post["id"], imageUrl: Image["url"]) => {
+      console.log(postId, imageUrl);
+
+      setSelectedPostId(postId);
+      setSelectedImageUrl(imageUrl);
+      setIsScrollFixed(true);
+    },
+    [setIsScrollFixed]
+  );
+
+  const onClickResetSelect = useCallback(() => {
+    setSelectedPostId(undefined);
+    setSelectedImageUrl(undefined);
+    setIsScrollFixed(false);
+  }, [setIsScrollFixed]);
 
   if (error) {
     return <div>error</div>;
@@ -18,7 +50,12 @@ export const IndexPage = () => {
         {data.map(({ posts }) =>
           posts.map(({ images, ...post }) =>
             images.map((image) => (
-              <ImageItem key={image.url} post={post} image={image} />
+              <ImageItem
+                key={image.url}
+                post={post}
+                image={image}
+                onClick={onClickImageItem}
+              />
             ))
           )
         )}
@@ -26,6 +63,22 @@ export const IndexPage = () => {
       {isLoadingMore && <div className="text-center">Loading...</div>}
 
       <div ref={bottomRef} className="h-[1px] w-[1px]" />
+
+      {selectedPostId && (
+        <div
+          className="fixed top-0 left-0 flex h-full w-full items-center justify-center bg-black/90"
+          onClick={onClickResetSelect}
+        >
+          <img
+            className="max-h-full max-w-full select-none"
+            src={selectedImageUrl}
+            alt=""
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };
