@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
       user: true,
       images: {
         orderBy: {
-          index: "asc",
+          order: "asc",
         },
         select: {
           id: true,

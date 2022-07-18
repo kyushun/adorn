@@ -62,7 +62,7 @@ router.get("/", async (req, res) => {
     const images = await Promise.all(
       tweet.imageUrls!.map(async (imageUrl, index) => {
         const image = await prisma.image.create({
-          data: { index, postId: post.id },
+          data: { order: index, postId: post.id },
         });
 
         const imageRes = await fetch(imageUrl);
@@ -85,7 +85,7 @@ router.get("/", async (req, res) => {
     );
 
     const imageIds = images
-      .sort((image) => image.index)
+      .sort((image) => image.order)
       .map((image) => image.id);
 
     return imageIds;
