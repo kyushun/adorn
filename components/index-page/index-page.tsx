@@ -1,3 +1,4 @@
+import { ImageItem } from "./image-item";
 import { useFetchPosts } from "./use-fetch-posts";
 
 export const IndexPage = () => {
@@ -14,16 +15,10 @@ export const IndexPage = () => {
   return (
     <div>
       <div className="m-4 columns-2 md:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6">
-        {data.map((v) =>
-          v.posts.map((post) =>
-            post.images.map((image) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={image.url}
-                src={image.url}
-                alt=""
-                className="mb-4 cursor-pointer rounded-xl transition-opacity hover:opacity-75"
-              />
+        {data.map(({ posts }) =>
+          posts.map(({ images, ...post }) =>
+            images.map((image) => (
+              <ImageItem key={image.url} post={post} image={image} />
             ))
           )
         )}

@@ -1,16 +1,22 @@
+export type Image = {
+  url: string;
+};
+
+export type User = {
+  id: string;
+  name: string;
+};
+
+export type Post = {
+  id: string;
+  text: string;
+  postedAt: Date;
+  createdAt: Date;
+  user: User;
+  images: Image[];
+};
+
 export type GetPostsResponse = {
-  posts: {
-    id: string;
-    text: string;
-    postedAt: Date;
-    createdAt: Date;
-    user: {
-      id: string;
-      name: string;
-    };
-    images: {
-      url: string;
-    }[];
-  }[];
+  posts: Post[];
   cursor: string;
 };
