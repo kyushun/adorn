@@ -5,6 +5,7 @@ import { isScrollFixedAtom } from "states/atoms";
 import { Image, Post } from "utils/type";
 
 import { ImageItem } from "./image-item";
+import { ImageModal } from "./image-modal";
 import { useFetchPosts } from "./use-fetch-posts";
 
 export const IndexPage = () => {
@@ -64,20 +65,11 @@ export const IndexPage = () => {
 
       <div ref={bottomRef} className="h-[1px] w-[1px]" />
 
-      {selectedPostId && (
-        <div
-          className="fixed top-0 left-0 flex h-full w-full items-center justify-center bg-black/90"
-          onClick={onClickResetSelect}
-        >
-          <img
-            className="max-h-full max-w-full select-none"
-            src={selectedImageUrl}
-            alt=""
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          />
-        </div>
+      {selectedImageUrl && (
+        <ImageModal
+          imageUrl={selectedImageUrl}
+          onClickClose={onClickResetSelect}
+        />
       )}
     </div>
   );
