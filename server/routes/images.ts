@@ -31,7 +31,7 @@ router.get(
           }
         });
 
-        res.set("Cache-Control", "max-age=31536000");
+        res.set("Cache-Control", "public, max-age=31536000");
       });
 
     const readStream = s3Request.createReadStream().on("error", (err: any) => {
