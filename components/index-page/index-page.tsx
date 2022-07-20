@@ -47,7 +47,7 @@ export const IndexPage = () => {
 
   return (
     <div>
-      <div className="m-4 columns-2 md:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6">
+      <div className="m-4 min-h-screen columns-2 md:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6">
         {data.map(({ posts }) =>
           posts.map(({ images, ...post }) =>
             images.map((image) => (
