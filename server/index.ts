@@ -20,6 +20,8 @@ const handle = app.getRequestHandler();
 
     const server = express();
 
+    server.disable("x-powered-by");
+
     server.use(log4js.connectLogger(accessLogger, {}));
     server.use((req, _, next) => {
       if (!req) return next();
