@@ -2,7 +2,7 @@
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isScrollFixedAtom } from "states/atoms";
-import { throttle } from "throttle-debounce";
+import { debounce, throttle } from "throttle-debounce";
 import { Image, Post } from "utils/type";
 
 import { ImageItem } from "./image-item";
@@ -70,15 +70,23 @@ export const IndexPage = () => {
     [resizeAllGridItems]
   );
 
+  const onResize = useMemo(
+    () =>
+      debounce(100, () => {
+        resizeAllGridItems();
+      }),
+    [resizeAllGridItems]
+  );
+
   useEffect(() => {
     resizeAllGridItems();
 
-    window.addEventListener("resize", resizeAllGridItems);
+    window.addEventListener("resize", onResize);
 
     return () => {
-      window.removeEventListener("resize", resizeAllGridItems);
+      window.removeEventListener("resize", onResize);
     };
-  }, [resizeAllGridItems]);
+  }, [onResize, resizeAllGridItems]);
 
   if (error) {
     return <div>error</div>;
