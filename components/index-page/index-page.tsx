@@ -1,15 +1,26 @@
 /* eslint-disable @next/next/no-img-element */
 import { useSetAtom } from "jotai";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { isScrollFixedAtom } from "states/atoms";
 import { Image, Post } from "utils/type";
 
 import { ImageItem } from "./image-item";
 import { ImageModal } from "./image-modal";
 import { useFetchPosts } from "./use-fetch-posts";
+import { useLoadImage } from "./use-load-image";
 
 export const IndexPage = () => {
   const { bottomRef, data, error, isLoadingMore } = useFetchPosts();
+
+  const imageCount = data
+    ?.map(({ posts }) => posts.map(({ images }) => images))
+    .flat(2).length;
+
+  const { isAllImagesLoaded, onCompleteImageRequest } = useLoadImage(
+    imageCount || 0
+  );
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const setIsScrollFixed = useSetAtom(isScrollFixedAtom);
 
@@ -37,6 +48,42 @@ export const IndexPage = () => {
     setIsScrollFixed(false);
   }, [setIsScrollFixed]);
 
+  const resizeAllGridItems = useCallback(() => {
+    const gridElement = wrapperRef.current;
+
+    if (!gridElement) return;
+
+    const resizeGridItem = (itemElement: HTMLElement) => {
+      const gridElement = wrapperRef.current;
+      const contentElement = itemElement.firstElementChild;
+
+      if (!gridElement) return;
+      if (!contentElement) return;
+
+      const rowSpan = Math.ceil(contentElement.getBoundingClientRect().height);
+
+      itemElement.style.gridRowEnd = "span " + rowSpan;
+    };
+
+    Array.from(gridElement.children).forEach((element) => {
+      resizeGridItem(element as HTMLElement);
+    });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("resize", resizeAllGridItems);
+
+    return () => {
+      window.removeEventListener("resize", resizeAllGridItems);
+    };
+  }, [resizeAllGridItems]);
+
+  useEffect(() => {
+    if (!isAllImagesLoaded) return;
+
+    resizeAllGridItems();
+  }, [isAllImagesLoaded, resizeAllGridItems]);
+
   if (error) {
     return <div>error</div>;
   }
@@ -47,7 +94,10 @@ export const IndexPage = () => {
 
   return (
     <div>
-      <div className="m-4 min-h-screen columns-2 md:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6">
+      <div
+        ref={wrapperRef}
+        className="m-4 grid min-h-screen auto-rows-[1px] grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+      >
         {data.map(({ posts }) =>
           posts.map(({ images, ...post }) =>
             images.map((image) => (
@@ -56,6 +106,8 @@ export const IndexPage = () => {
                 post={post}
                 image={image}
                 onClick={onClickImageItem}
+                onLoad={onCompleteImageRequest}
+                onError={onCompleteImageRequest}
               />
             ))
           )
