@@ -27,6 +27,7 @@ export const useFetchPosts = () => {
 
   useEffect(() => {
     if (!isBottom) return;
+    if (isLoadingInitialData || isLoadingMore) return;
     if (isReachingEndRef.current) return;
 
     setSize((size) => size + 1);
