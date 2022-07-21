@@ -1,24 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 import { useSetAtom } from "jotai";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isScrollFixedAtom } from "states/atoms";
+import { throttle } from "throttle-debounce";
 import { Image, Post } from "utils/type";
 
 import { ImageItem } from "./image-item";
 import { ImageModal } from "./image-modal";
 import { useFetchPosts } from "./use-fetch-posts";
-import { useLoadImage } from "./use-load-image";
 
 export const IndexPage = () => {
   const { bottomRef, data, error, isLoadingMore } = useFetchPosts();
-
-  const imageCount = data
-    ?.map(({ posts }) => posts.map(({ images }) => images))
-    .flat(2).length;
-
-  const { isAllImagesLoaded, onCompleteImageRequest } = useLoadImage(
-    imageCount || 0
-  );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -70,19 +62,23 @@ export const IndexPage = () => {
     });
   }, []);
 
+  const onLoadImage = useMemo(
+    () =>
+      throttle(300, () => {
+        resizeAllGridItems();
+      }),
+    [resizeAllGridItems]
+  );
+
   useEffect(() => {
+    resizeAllGridItems();
+
     window.addEventListener("resize", resizeAllGridItems);
 
     return () => {
       window.removeEventListener("resize", resizeAllGridItems);
     };
   }, [resizeAllGridItems]);
-
-  useEffect(() => {
-    if (!isAllImagesLoaded) return;
-
-    resizeAllGridItems();
-  }, [isAllImagesLoaded, resizeAllGridItems]);
 
   if (error) {
     return <div>error</div>;
@@ -106,8 +102,7 @@ export const IndexPage = () => {
                 post={post}
                 image={image}
                 onClick={onClickImageItem}
-                onLoad={onCompleteImageRequest}
-                onError={onCompleteImageRequest}
+                onLoad={onLoadImage}
               />
             ))
           )
