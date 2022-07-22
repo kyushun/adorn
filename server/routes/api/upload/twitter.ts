@@ -9,7 +9,7 @@ import { Tweet } from "@/server/utils/tweet";
 const router = express.Router();
 
 const extractIdFromUrl = (url: string) => {
-  const match = url.match(/^https:\/\/twitter.com\/.+\/status\/(\d+)/);
+  const match = url.match(/^(?:https:\/\/)?twitter.com\/.+\/status\/(\d+)/);
 
   return match?.[1] || url;
 };
