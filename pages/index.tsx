@@ -9,14 +9,14 @@ const Home: NextPage = () => {
 };
 
 export async function getServerSideProps() {
-  const response = await fetch(createAPIUrl("/api/images")).then((v) =>
+  const response = await fetch(createAPIUrl("/api/posts")).then((v) =>
     v.json()
   );
 
   return {
     props: {
       fallback: {
-        [unstable_serialize(() => "/api/images")]: [response],
+        [unstable_serialize(() => "/api/posts")]: [response],
       },
     },
   };

@@ -9,9 +9,9 @@ export const useFetchPosts = () => {
     (index, prev) => {
       if (prev && prev.posts.length === 0) return null;
 
-      if (index === 0) return "/api/images";
+      if (index === 0) return "/api/posts";
 
-      return `/api/images?cursor=${prev!.cursor}`;
+      return `/api/posts?cursor=${prev!.cursor}`;
     }
   );
   const [bottomRef, isBottom] = useScrollToBottom();

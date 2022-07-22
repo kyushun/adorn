@@ -6,7 +6,7 @@ import log4js from "log4js";
 import next from "next";
 
 import apiRouter from "./routes/api";
-import imagesRouter from "./routes/images";
+import mediaRouter from "./routes/media";
 import { accessLogger, expressLogger } from "./utils/logger";
 
 const dev = process.env.NODE_ENV === "development";
@@ -35,8 +35,8 @@ const handle = app.getRequestHandler();
       next();
     });
 
+    server.use("/media", mediaRouter);
     server.use("/api", apiRouter);
-    server.use("/images", imagesRouter);
 
     server.all("*", (req: Request, res: Response) => {
       return handle(req, res);
