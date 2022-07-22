@@ -2,7 +2,7 @@
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isScrollFixedAtom } from "states/atoms";
-import { debounce, throttle } from "throttle-debounce";
+import { throttle } from "throttle-debounce";
 import { Image, Post } from "utils/type";
 
 import { ImageItem } from "./image-item";
@@ -25,8 +25,6 @@ export const IndexPage = () => {
 
   const onClickImageItem = useCallback(
     (postId: Post["id"], imageUrl: Image["url"]) => {
-      console.log(postId, imageUrl);
-
       setSelectedPostId(postId);
       setSelectedImageUrl(imageUrl);
       setIsScrollFixed(true);
@@ -62,17 +60,9 @@ export const IndexPage = () => {
     });
   }, []);
 
-  const onLoadImage = useMemo(
+  const resizeThrottle = useMemo(
     () =>
       throttle(300, () => {
-        resizeAllGridItems();
-      }),
-    [resizeAllGridItems]
-  );
-
-  const onResize = useMemo(
-    () =>
-      debounce(100, () => {
         resizeAllGridItems();
       }),
     [resizeAllGridItems]
@@ -81,12 +71,12 @@ export const IndexPage = () => {
   useEffect(() => {
     resizeAllGridItems();
 
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", resizeThrottle);
 
     return () => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", resizeThrottle);
     };
-  }, [onResize, resizeAllGridItems]);
+  }, [resizeThrottle, resizeAllGridItems]);
 
   if (error) {
     return <div>error</div>;
@@ -110,7 +100,7 @@ export const IndexPage = () => {
                 post={post}
                 image={image}
                 onClick={onClickImageItem}
-                onLoad={onLoadImage}
+                onLoad={resizeThrottle}
               />
             ))
           )
