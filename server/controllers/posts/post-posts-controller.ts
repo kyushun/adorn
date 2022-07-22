@@ -26,6 +26,10 @@ export const postPostsController = asyncHandler(async (req, res) => {
     return res.status(404).json({ error: "Tweet not found" });
   }
 
+  if (!tweet.hasImage) {
+    return res.status(404).json({ error: "Image not found" });
+  }
+
   const exists = await prisma.post
     .count({
       where: { id: tweet.id },
