@@ -2,6 +2,7 @@ import S3 from "aws-sdk/clients/s3";
 import express from "express";
 
 import { asyncHandler } from "@/server/utils/express";
+import { prisma } from "@/server/utils/prisma";
 import s3 from "@/server/utils/s3";
 
 const router = express.Router();
@@ -13,6 +14,16 @@ router.get(
   "/:id",
   asyncHandler(async (req, res, next) => {
     const key = req.params.id;
+
+    const exists =
+      (await prisma.image.count({
+        where: {
+          id: key,
+          deletedAt: null,
+        },
+      })) !== 0;
+
+    if (!exists) return res.status(404).json({ error: "File not found" });
 
     const s3Params: S3.GetObjectRequest = {
       Bucket: s3.bucketName,
