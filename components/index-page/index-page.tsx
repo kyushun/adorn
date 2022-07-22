@@ -39,6 +39,7 @@ export const IndexPage = () => {
   }, [setIsScrollFixed]);
 
   const resizeAllGridItems = useCallback(() => {
+    // https://medium.com/@andybarefoot/a-masonry-style-layout-using-css-grid-8c663d355ebb
     const gridElement = wrapperRef.current;
 
     if (!gridElement) return;
@@ -50,7 +51,13 @@ export const IndexPage = () => {
       if (!gridElement) return;
       if (!contentElement) return;
 
-      const rowSpan = Math.ceil(contentElement.getBoundingClientRect().height);
+      const margin =
+        parseInt(
+          window.getComputedStyle(itemElement).getPropertyValue("margin")
+        ) * 2;
+
+      const rowSpan =
+        Math.ceil(contentElement.getBoundingClientRect().height) + margin;
 
       itemElement.style.gridRowEnd = "span " + rowSpan;
     };
@@ -90,7 +97,7 @@ export const IndexPage = () => {
     <div>
       <div
         ref={wrapperRef}
-        className="m-4 grid min-h-screen auto-rows-[1px] grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+        className="m-4 grid min-h-screen auto-rows-[1px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
       >
         {data.map(({ posts }) =>
           posts.map(({ images, ...post }) =>
