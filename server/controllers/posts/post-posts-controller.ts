@@ -12,7 +12,9 @@ const extractIdFromUrl = (url: string) => {
 export const postPostsController = asyncHandler(async (req, res) => {
   const requestedId: string | undefined = req.body.id;
   if (requestedId == undefined) {
-    return res.status(404).send("invalid args");
+    return res
+      .status(400)
+      .json({ error: "Missing required parameter for tweet id" });
   }
 
   const id = extractIdFromUrl(requestedId);
@@ -21,8 +23,7 @@ export const postPostsController = asyncHandler(async (req, res) => {
   try {
     tweet = await Tweet.getTweet(id);
   } catch (e) {
-    console.error(e);
-    return res.status(404).send("not found");
+    return res.status(404).json({ error: "Tweet not found" });
   }
 
   const exists = await prisma.post
@@ -32,7 +33,7 @@ export const postPostsController = asyncHandler(async (req, res) => {
     .then(Boolean);
 
   if (exists) {
-    return res.status(404).send("exists");
+    return res.status(409).json({ error: `This tweet already exists` });
   }
 
   const imageIds = await prisma.$transaction(async (prisma) => {

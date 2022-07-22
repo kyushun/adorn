@@ -47,7 +47,7 @@ const handle = app.getRequestHandler();
       expressLogger.error(err.message);
       expressLogger.debug(err.stack);
 
-      res.status(500).send("Internal Server Error");
+      res.status(500).json({ error: "Internal Server Error" });
     });
 
     server.listen(port, (err?: any) => {
