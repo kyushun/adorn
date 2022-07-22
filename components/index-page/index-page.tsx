@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import useEvent from "@react-hook/event";
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isScrollFixedAtom } from "states/atoms";
@@ -23,7 +24,7 @@ export const IndexPage = () => {
     Image["url"] | undefined
   >(undefined);
 
-  const onClickImageItem = useCallback(
+  const setSelectedImageItem = useCallback(
     (postId: Post["id"], imageUrl: Image["url"]) => {
       setSelectedPostId(postId);
       setSelectedImageUrl(imageUrl);
@@ -32,11 +33,17 @@ export const IndexPage = () => {
     [setIsScrollFixed]
   );
 
-  const onClickResetSelect = useCallback(() => {
+  const resetSelectedImageItem = useCallback(() => {
     setSelectedPostId(undefined);
     setSelectedImageUrl(undefined);
     setIsScrollFixed(false);
   }, [setIsScrollFixed]);
+
+  useEvent(typeof window !== "undefined" ? window : null, "keydown", (e) => {
+    if (e.key === "Escape") {
+      resetSelectedImageItem();
+    }
+  });
 
   const resizeAllGridItems = useCallback(() => {
     // https://medium.com/@andybarefoot/a-masonry-style-layout-using-css-grid-8c663d355ebb
@@ -97,7 +104,7 @@ export const IndexPage = () => {
     <div>
       <div
         ref={wrapperRef}
-        className="m-4 grid min-h-screen auto-rows-[1px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+        className="m-4 grid min-h-screen auto-rows-[1px] grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
       >
         {data.map(({ posts }) =>
           posts.map(({ images, ...post }) =>
@@ -106,7 +113,7 @@ export const IndexPage = () => {
                 key={image.url}
                 post={post}
                 image={image}
-                onClick={onClickImageItem}
+                onClick={setSelectedImageItem}
                 onLoad={resizeThrottle}
               />
             ))
@@ -120,7 +127,7 @@ export const IndexPage = () => {
       {selectedImageUrl && (
         <ImageModal
           imageUrl={selectedImageUrl}
-          onClickClose={onClickResetSelect}
+          onClickClose={resetSelectedImageItem}
         />
       )}
     </div>

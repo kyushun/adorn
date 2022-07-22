@@ -14,7 +14,7 @@ export const ImageItem = ({
 }) => {
   return (
     <div
-      className="relative m-1 cursor-pointer overflow-hidden rounded-xl transition-opacity hover:opacity-75"
+      className="relative m-1 cursor-pointer overflow-hidden rounded-xl transition-opacity hover:opacity-80"
       style={{ transform: "translate3d(0, 0, 0)" }}
       onClick={() => {
         onClick(post.id, image.url);
