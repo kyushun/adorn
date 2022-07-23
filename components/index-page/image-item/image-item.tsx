@@ -3,14 +3,18 @@ import { Image, Post } from "utils/type";
 
 import { createTwitterProfileUrl } from "@/server/utils/url";
 
+import { ImageCountBadge } from "./image-count-badge";
+
 export const ImageItem = ({
   post,
   image,
+  imageCount,
   onClick,
   onLoad,
 }: {
   post: Omit<Post, "images">;
   image: Image;
+  imageCount?: number;
   onClick: (postId: Post["id"], imageUrl: Image["url"]) => void;
   onLoad: () => void;
 }) => {
@@ -30,6 +34,12 @@ export const ImageItem = ({
           onLoad={onLoad}
           className="transition-opacity group-hover:opacity-80"
         />
+
+        {imageCount && imageCount > 1 && (
+          <div className="absolute top-2 right-2">
+            <ImageCountBadge count={imageCount} />
+          </div>
+        )}
 
         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-gray-800/75 px-4 pt-8 pb-4 text-gray-50">
           <a

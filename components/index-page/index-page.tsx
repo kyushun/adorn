@@ -134,6 +134,7 @@ export const IndexPage = () => {
                     key={image.url}
                     post={post}
                     image={image}
+                    imageCount={images.length}
                     onClick={setSelectedImageItem}
                     onLoad={resizeThrottle}
                   />
