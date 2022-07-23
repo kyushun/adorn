@@ -55,11 +55,8 @@ export const IndexPage = () => {
   }
 
   const posts = data.map((v) => v.posts).flat();
-  const selectedImageUrl = selectedImage
-    ? posts.find((post) => post.id === selectedImage.postId)?.images[
-        selectedImage.imageIndex
-      ].url
-    : undefined;
+
+  const selectedPost = posts.find((v) => v.id === selectedImage?.postId);
 
   return (
     <div>
@@ -78,9 +75,10 @@ export const IndexPage = () => {
 
       <div ref={bottomRef} className="h-[1px] w-[1px]" />
 
-      {selectedImageUrl && (
+      {selectedPost && (
         <ImageModal
-          imageUrl={selectedImageUrl}
+          post={selectedPost}
+          imageIndex={selectedImage?.imageIndex || 0}
           onClickClose={resetSelectedImageItem}
         />
       )}
