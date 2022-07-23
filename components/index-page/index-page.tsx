@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import useEvent from "@react-hook/event";
+import clsx from "clsx";
+import { Loading } from "components/common/loading";
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isScrollFixedAtom } from "states/atoms";
@@ -93,11 +95,15 @@ export const IndexPage = () => {
   }, [resizeThrottle, resizeAllGridItems]);
 
   if (error) {
-    return <div>error</div>;
+    return <div>An error has occurred.</div>;
   }
 
   if (!data) {
-    return <div>loading</div>;
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loading />
+      </div>
+    );
   }
 
   return (
@@ -120,7 +126,15 @@ export const IndexPage = () => {
           )
         )}
       </div>
-      {isLoadingMore && <div className="text-center">Loading...</div>}
+
+      <div
+        className={clsx(
+          "my-8 text-center",
+          isLoadingMore ? "opacity-100" : "opacity-0"
+        )}
+      >
+        <Loading />
+      </div>
 
       <div ref={bottomRef} className="h-[1px] w-[1px]" />
 
