@@ -1,13 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
+import { Switch } from "@headlessui/react";
 import useEvent from "@react-hook/event";
 import clsx from "clsx";
 import { Loading } from "components/common/loading";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isScrollFixedAtom } from "states/atoms";
+import { isAllImageViewEnabledAtom, isScrollFixedAtom } from "states/atoms";
 import { throttle } from "throttle-debounce";
 import { Image, Post } from "utils/type";
 
+import { GalleryHeader } from "./gallery-header";
 import { ImageItem } from "./image-item";
 import { ImageModal } from "./image-modal";
 import { useFetchPosts } from "./use-fetch-posts";
@@ -16,6 +18,8 @@ export const IndexPage = () => {
   const { bottomRef, data, error, isLoadingMore } = useFetchPosts();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const isAllImageViewEnabled = useAtomValue(isAllImageViewEnabledAtom);
 
   const setIsScrollFixed = useSetAtom(isScrollFixedAtom);
 
@@ -94,6 +98,10 @@ export const IndexPage = () => {
     };
   }, [resizeThrottle, resizeAllGridItems]);
 
+  useEffect(() => {
+    resizeAllGridItems();
+  }, [isAllImageViewEnabled, resizeAllGridItems]);
+
   if (error) {
     return <div>An error has occurred.</div>;
   }
@@ -108,22 +116,40 @@ export const IndexPage = () => {
 
   return (
     <div>
+      <GalleryHeader />
+
       <div
         ref={wrapperRef}
-        className="m-4 grid min-h-screen auto-rows-[1px] grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+        className="mx-4 grid min-h-screen auto-rows-[1px] grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
       >
         {data.map(({ posts }) =>
-          posts.map(({ images, ...post }) =>
-            images.map((image) => (
-              <ImageItem
-                key={image.url}
-                post={post}
-                image={image}
-                onClick={setSelectedImageItem}
-                onLoad={resizeThrottle}
-              />
-            ))
-          )
+          posts
+            .filter((post) => post.images.length > 0)
+            .map(({ images, ...post }) => {
+              if (!isAllImageViewEnabled) {
+                const image = images[0];
+
+                return (
+                  <ImageItem
+                    key={image.url}
+                    post={post}
+                    image={image}
+                    onClick={setSelectedImageItem}
+                    onLoad={resizeThrottle}
+                  />
+                );
+              }
+
+              return images.map((image) => (
+                <ImageItem
+                  key={image.url}
+                  post={post}
+                  image={image}
+                  onClick={setSelectedImageItem}
+                  onLoad={resizeThrottle}
+                />
+              ));
+            })
         )}
       </div>
 
