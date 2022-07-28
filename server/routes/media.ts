@@ -33,7 +33,7 @@ router.get(
 
     const s3Request = s3.client
       .getObject(s3Params)
-      .on("httpHeaders", (_, s3Headers) => {
+      .on("httpHeaders", (_, s3Headers, response) => {
         forwardHeaders.forEach((header) => {
           var headerValue = s3Headers[header];
 
@@ -42,7 +42,9 @@ router.get(
           }
         });
 
-        res.set("Cache-Control", "public, max-age=31536000");
+        if (response.httpResponse.statusCode === 200) {
+          res.set("Cache-Control", "public, max-age=7776000");
+        }
       });
 
     const readStream = s3Request.createReadStream().on("error", (err: any) => {
