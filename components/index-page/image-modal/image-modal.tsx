@@ -54,9 +54,6 @@ const useImageResize = () => {
     const imageElement = ref.current;
     if (!imageElement) return;
 
-    const parentElement = imageElement.parentElement;
-    if (!parentElement) return;
-
     const imageRatio = imageElement.naturalWidth / imageElement.naturalHeight;
 
     const clientRatio =
@@ -64,11 +61,11 @@ const useImageResize = () => {
       document.documentElement.clientHeight;
 
     if (clientRatio > imageRatio) {
-      parentElement.style.width = "";
-      parentElement.style.height = "100%";
+      imageElement.style.width = "auto";
+      imageElement.style.height = `${window.innerHeight}px`;
     } else {
-      parentElement.style.width = "100%";
-      parentElement.style.height = "";
+      imageElement.style.width = `${window.innerWidth}px`;
+      imageElement.style.height = "auto";
     }
   }, []);
 
@@ -105,7 +102,7 @@ export const ImageModal = ({
       <div className="relative">
         <img
           ref={imageRef}
-          className="h-full w-full select-none"
+          className="h-auto w-auto select-none"
           src={imageUrl}
           alt=""
           onClick={(e) => {
