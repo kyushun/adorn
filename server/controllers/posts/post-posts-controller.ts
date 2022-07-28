@@ -42,56 +42,59 @@ export const postPostsController = asyncHandler(async (req, res) => {
     return res.status(409).json({ error: `This tweet already exists` });
   }
 
-  const imageIds = await prisma.$transaction(async (prisma) => {
-    const user = await prisma.user.upsert({
-      where: { id: tweet.userId },
-      update: { name: tweet.username },
-      create: {
-        id: tweet.userId,
-        name: tweet.username,
-      },
-    });
+  const imageIds = await prisma.$transaction(
+    async (prisma) => {
+      const user = await prisma.user.upsert({
+        where: { id: tweet.userId },
+        update: { name: tweet.username },
+        create: {
+          id: tweet.userId,
+          name: tweet.username,
+        },
+      });
 
-    const post = await prisma.post.create({
-      data: {
-        id: tweet.id,
-        text: tweet.text,
-        postedAt: tweet.postDate,
-        userId: user.id,
-      },
-    });
+      const post = await prisma.post.create({
+        data: {
+          id: tweet.id,
+          text: tweet.text,
+          postedAt: tweet.postDate,
+          userId: user.id,
+        },
+      });
 
-    const images = await Promise.all(
-      tweet.imageUrls!.map(async (imageUrl, index) => {
-        const image = await prisma.image.create({
-          data: { order: index, postId: post.id },
-        });
+      const images = await Promise.all(
+        tweet.imageUrls!.map(async (imageUrl, index) => {
+          const image = await prisma.image.create({
+            data: { order: index, postId: post.id },
+          });
 
-        const imageRes = await fetch(imageUrl);
+          const imageRes = await fetch(imageUrl);
 
-        if (!imageRes.body) {
-          throw new Error("image fetch error");
-        }
+          if (!imageRes.body) {
+            throw new Error("image fetch error");
+          }
 
-        await s3.client
-          .upload({
-            Bucket: s3.bucketName,
-            Key: s3.createImageKey(image.id),
-            Body: imageRes.body,
-            ContentType: imageRes.headers.get("Content-Type") || undefined,
-          })
-          .promise();
+          await s3.client
+            .upload({
+              Bucket: s3.bucketName,
+              Key: s3.createImageKey(image.id),
+              Body: imageRes.body,
+              ContentType: imageRes.headers.get("Content-Type") || undefined,
+            })
+            .promise();
 
-        return image;
-      })
-    );
+          return image;
+        })
+      );
 
-    const imageIds = images
-      .sort((image) => image.order)
-      .map((image) => image.id);
+      const imageIds = images
+        .sort((image) => image.order)
+        .map((image) => image.id);
 
-    return imageIds;
-  });
+      return imageIds;
+    },
+    { timeout: 15000 }
+  );
 
   res.json(imageIds);
 });
