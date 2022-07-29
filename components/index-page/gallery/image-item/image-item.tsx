@@ -56,10 +56,10 @@ export const ImageItem = (props: Props) => {
       <div>
         <img
           key={image.url}
-          src={image.url}
+          src={`${image.url}?type=thumb`}
           alt=""
           onLoad={props.onLoad}
-          className="transition-opacity group-hover:opacity-80"
+          className="w-full transition-opacity group-hover:opacity-80"
         />
 
         {props.isImageCountVisible && imageCount > 1 && (

@@ -1,5 +1,6 @@
 import S3 from "aws-sdk/clients/s3";
 import express from "express";
+import sharp from "sharp";
 
 import { asyncHandler } from "@/server/utils/express";
 import { prisma } from "@/server/utils/prisma";
@@ -14,6 +15,7 @@ router.get(
   "/:id",
   asyncHandler(async (req, res, next) => {
     const key = req.params.id;
+    const type = req.query.type;
 
     const exists =
       (await prisma.image.count({
@@ -55,7 +57,14 @@ router.get(
       return next(err);
     });
 
-    readStream.pipe(res);
+    if (type === "thumb") {
+      const pipeline = sharp();
+      pipeline.resize(600).pipe(res);
+
+      readStream.pipe(pipeline);
+    } else {
+      readStream.pipe(res);
+    }
   })
 );
 
