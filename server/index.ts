@@ -6,6 +6,7 @@ import log4js from "log4js";
 import next from "next";
 
 import apiRouter from "./routes/api";
+import authRouter from "./routes/auth";
 import mediaRouter from "./routes/media";
 import { accessLogger, expressLogger } from "./utils/logger";
 
@@ -36,6 +37,7 @@ const handle = app.getRequestHandler();
       next();
     });
 
+    server.use(authRouter);
     server.use("/media", mediaRouter);
     server.use("/api", apiRouter);
 
